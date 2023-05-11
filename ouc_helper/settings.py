@@ -91,6 +91,10 @@ DATABASES = {
         'PASSWORD': conf.get("database", "PASSWORD"),
         'HOST': '127.0.0.1',
         'PORT': 3306,
+        'OPTIONS': {
+            'charset': 'utf8',
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
+        },
     }
 }
 
