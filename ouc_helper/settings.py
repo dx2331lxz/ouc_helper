@@ -46,13 +46,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.login.apps.LoginConfig',
     'rest_framework_simplejwt',
+    'channels',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -160,5 +161,13 @@ EMAIL_HOST_USER = '3434055686@qq.com'
 EMAIL_HOST_PASSWORD = 'khturjoqlzslchge'
 EMAIL_USE_SSL = True
 
-#session
+# session
 SESSION_COOKIE_AGE = 60
+
+ASGI_APPLICATION = "ouc_helper.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}

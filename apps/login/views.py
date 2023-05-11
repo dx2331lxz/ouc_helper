@@ -158,7 +158,7 @@ class EmailVerificationAPIView(APIView):
             <td style="text-align: center">
                 <div style=" box-sizing: border-box; max-width: 508px; margin: 0 auto; background: #f9f9f9; margin-top: 70px; padding: 15px 24px 28px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; ">
                     <div style=" font-family: HarmonyOS Sans, SF Pro Text, SF Pro Icons, robot, Helvetica Neue, Helvetica, Arial, sans-serif; font-weight: 400; font-size: 12px; line-height: 17px; text-align: center; color: #7D7D7D; ">
-                        爱特工作室致力于保护您的账户和交易安全<br> - 如果您怀疑自己收到了诈骗信息，请立即联系客服 -
+                        爱特工作室致力于成就学生的梦想<br> - 如果您怀疑自己收到了诈骗信息，请立即联系客服 -
                         请勿与任何人分享您的验证码，包括官方客服和工作人员
                     </div>
                     <div style=" margin: 14px auto 12px; background-image: url('https://static.coinall.ltd/cdn/banner/20221205/16702339641035d61f6bf-822b-4c10-a25a-23fd6b74d4df.png'); background-size: 100% 10px; background-repeat: no-repeat; background-position: center;">
