@@ -4,4 +4,5 @@ from . import views
 
 urlpatterns = [
     path('index/', views.ChatAPIView.as_view()),
+    path('add/', views.AddRoomAPIView.as_view()),
 ]
