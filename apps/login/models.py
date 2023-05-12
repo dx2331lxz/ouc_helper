@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+
 class Information(models.Model):
     user = models.ForeignKey(verbose_name='关联用户', to=User, to_field='id', on_delete=models.CASCADE)
     avator_url = models.CharField(verbose_name='头像链接', max_length=60)
@@ -11,6 +12,27 @@ class Information(models.Model):
     phone = models.CharField(verbose_name='电话号码', max_length=20)
     qq = models.CharField(verbose_name='qq号', max_length=30)
     wechat = models.CharField(verbose_name='微信号', max_length=40)
+
+
+type_choices = (
+    (1, '失物'),
+    (2, '寻物')
+)
+
+
+class LostAndFound(models.Model):
+    name = models.CharField(verbose_name='物品名称', max_length=40)
+    time = models.DateTimeField(verbose_name='丢失时间')
+    place = models.CharField(verbose_name='丢失地点', max_length=60)
+    user = models.ForeignKey(verbose_name='关联用户', to=User, to_field='id', on_delete=models.CASCADE)
+    description = models.TextField(verbose_name='文字介绍', blank=True, null=True)
+    type = models.IntegerField(verbose_name='类型', choices=type_choices)
+    state = models.BooleanField(verbose_name='状态', default=1)  # 1未找到，0已找到
+
+
+class Picture(models.Model):
+    url = models.CharField(verbose_name='图片链接', max_length=60)
+    thing = models.ForeignKey(to_field='id', to='LostAndFound', on_delete=models.DO_NOTHING, verbose_name='物品')
 
 
 class Message(models.Model):
