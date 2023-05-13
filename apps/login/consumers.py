@@ -71,6 +71,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             Channel.objects.filter(user_id=user_id).update(channel_name=self.channel_name, status=True)
         else:
             Channel.objects.create(user_id=user_id, channel_name=self.channel_name, status=True)
+        Message.objects.filter(to_user=user_id).delete()
         return message_list
 
     async def websocket_receive(self, message):
@@ -88,12 +89,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def get_status(self, group_id, message):
         from_user = '0'
         to_user = '0'
+        is_save = 0
         for obj in Channel.objects.filter(group_id=group_id):
             if obj.status == 1:
                 from_user = obj.user_id
             else:
+                is_save = 1
                 to_user = obj.user_id
-        Message.objects.create(room_id=group_id, from_user=from_user, to_user=to_user, content=message['text'])
+        if is_save:
+            Message.objects.create(room_id=group_id, from_user=from_user, to_user=to_user, content=message['text'])
 
     async def send_message(self, event):
         text = event['message']['text']

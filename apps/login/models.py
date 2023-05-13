@@ -7,11 +7,12 @@ from django.contrib.auth.models import User
 
 class Information(models.Model):
     user = models.ForeignKey(verbose_name='关联用户', to=User, to_field='id', on_delete=models.CASCADE)
-    avator_url = models.CharField(verbose_name='头像链接', max_length=60)
-    name = models.CharField(verbose_name='昵称', max_length=40)
-    phone = models.CharField(verbose_name='电话号码', max_length=20)
-    qq = models.CharField(verbose_name='qq号', max_length=30)
-    wechat = models.CharField(verbose_name='微信号', max_length=40)
+    avator_url = models.CharField(verbose_name='头像链接', max_length=60,
+                                  default='https://image.daoxuan.cc/image/202301301254377.webp')
+    name = models.CharField(verbose_name='昵称', max_length=40, default='昵称')
+    phone = models.CharField(verbose_name='电话号码', max_length=20, default='')
+    qq = models.CharField(verbose_name='qq号', max_length=30, default='')
+    wechat = models.CharField(verbose_name='微信号', max_length=40, default='')
 
 
 type_choices = (

@@ -25,4 +25,5 @@ urlpatterns = [
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('oucchat/', include('apps.oucchat.urls')),
+    path('person/', include('apps.information.urls')),
 ]
