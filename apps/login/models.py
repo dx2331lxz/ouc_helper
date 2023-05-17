@@ -23,7 +23,7 @@ type_choices = (
 
 class LostAndFound(models.Model):
     name = models.CharField(verbose_name='物品名称', max_length=40)
-    time = models.DateTimeField(verbose_name='丢失时间')
+    time = models.DateTimeField(verbose_name='丢失时间', blank=True, null=True)
     place = models.CharField(verbose_name='丢失地点', max_length=60)
     user = models.ForeignKey(verbose_name='关联用户', to=User, to_field='id', on_delete=models.CASCADE)
     description = models.TextField(verbose_name='文字介绍', blank=True, null=True)
