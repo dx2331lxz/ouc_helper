@@ -96,7 +96,7 @@ class PersonObjectView(APIView):
     def get(self, request):
         data = json.loads(request.body.decode())
         type = data['type']
-        id = data['id']
+        id = request.user.id
         objs = LostAndFound.objects.filter(type=type, user_id=id)
         paginated_objs = self.pagination_class().paginate_queryset(objs, request)
         objs_s = LostAndFoundModelSerializer(instance=paginated_objs, many=True)
