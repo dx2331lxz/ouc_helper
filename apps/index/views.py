@@ -34,11 +34,11 @@ class IndexView(APIView):
             user = models.Information.objects.filter(user_id=datas['user_id']).first()
             pictures = models.Picture.objects.filter(thing_id=datas['id']).order_by('id')[:3]
             datas['user_name'] = user.name
-            datas['user_picture'] = user.avator_url
+            datas['user_avatar'] = user.avatar_url
             picture_data = []
             for picture in pictures:
                 picture_data.append(picture.url)
-            datas['picture'] = picture_data
+            datas['pictures'] = picture_data
         return JsonResponse({'code': 200, 'message': 'OK', 'data': objs_s.data})
 
 

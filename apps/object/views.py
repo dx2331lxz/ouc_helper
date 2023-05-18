@@ -19,12 +19,12 @@ class InformationView(APIView):
         objs_s = LostAndFoundModelSerializer(instance=obj, many=True)
         user = models.Information.objects.filter(user_id=objs_s.data[0]['user']).first()
         objs_s.data[0]['user_name'] = user.name
-        objs_s.data[0]['avator'] = user.avator_url
+        objs_s.data[0]['avatar'] = user.avatar_url
         pictures = models.Picture.objects.filter(thing_id=id)
         picture_data = []
         for picture in pictures:
             picture_data.append(picture.url)
-        objs_s.data[0]['picture'] = picture_data
+        objs_s.data[0]['pictures'] = picture_data
         contact = {
             'phone': user.phone,
             'qq': user.qq,
