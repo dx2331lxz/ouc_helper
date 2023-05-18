@@ -44,7 +44,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def websocket_connect(self, message):
 
         user_id = self.scope["url_route"]['kwargs'].get("id")
-
+        print(self.scope)
         # async_to_sync(Channel.objects.filter(user_id=user_id).update(channel_name=self.channel_name))
         # print(user_id)
         # print(self.scope)

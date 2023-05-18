@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'apps.login.apps.LoginConfig',
     'rest_framework_simplejwt',
+    'django_mysql',
     'channels',
 ]
 
@@ -54,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -92,8 +95,7 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': 3306,
         'OPTIONS': {
-            'charset': 'utf8',
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'"
+            'charset': 'utf8'
         },
     }
 }
@@ -158,6 +160,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CORS_ORIGIN_ALLOW_ALL = True
 # 邮箱
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = '465'
@@ -195,3 +198,19 @@ CHANNEL_LAYERS = {
 #         },
 #     },
 # }
+
+# 设置GitHub账户Token
+GITHUB_TOKEN = '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'  # 用你自己的token替换
+GITHUB_API_URL = 'https://api.github.com'
+GITHUB_OWNER = 'dx2331lxz'  # 用你自己的用户名替换
+GITHUB_REPO = 'blog-image'  # 用你自己的repo名替换
+GITHUB_BRANCH = 'main'  # 分支名
+
+# GitHub 用户名
+GITHUB_USERNAME = 'dx2331lxz'
+# 需要上传的仓库名
+GITHUB_REPO_NAME = 'blog-image'
+# GitHub 账户Token，需要先在GitHub账户中生成一个Token，然后在此处进行设置，为了安全起见，token建议保存在环境变量中进行调用。
+GITHUB_PERSONAL_ACCESS_TOKEN = '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'
+# 用于图片上传的仓库内容路径，如果已经有个文件夹存储图片，可以设置一个目录路径
+GITHUB_REPO_CONTENT_PATH = 'tomato'

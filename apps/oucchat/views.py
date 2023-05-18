@@ -13,7 +13,8 @@ class ChatAPIView(APIView):
 
     def get(self, request):
         id = request.GET.get('id')
-        return render(request, 'chat.html', {'id': id})
+        to_id = request.GET.get('to_id')
+        return render(request, 'chat.html', {'id': id, 'to_id':to_id})
 
 
 def creat_roomid(u1, u2):
@@ -36,6 +37,10 @@ class AddRoomAPIView(APIView):
         to_channel_name = Channel.objects.filter(user_id=to_id).first().channel_name
         async_to_sync(channel_layer.group_add)(roomid, from_channel_name)
         async_to_sync(channel_layer.group_add)(roomid, to_channel_name)
-        Channel.objects.filter(user_id__in=[user_id, to_id]).update(group_id=roomid)
+        # Channel.objects.filter(user_id__in=[user_id, to_id]).update(group_id=roomid)
+        if Group.objects.filter(group_id=roomid):
+            pass
+        else:
+            Group.objects.create(group_id=roomid, widget_user_ids=[int(user_id), int(to_id)])
         result = {"msg": "ok", "code": 200}
         return Response(result, status=status.HTTP_200_OK)

@@ -153,7 +153,7 @@
     </form>
     <script>
       const messages = document.getElementById("messages");
-      const socket = new WebSocket("ws://127.0.0.1:8000/room/{{ id }}/");
+      const socket = new WebSocket("ws://127.0.0.1:8000/room/{{ id }}/{{ to_id }}/");
       const userAvatar = "https://image.daoxuan.cc/image/202301051351497.jpg";
       const aiAvatar = "https://image.daoxuan.cc/image/202301051403913.png";
 

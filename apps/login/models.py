@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-
+from django_mysql.models import ListTextField
 
 # Create your models here.
 
@@ -50,3 +50,11 @@ class Channel(models.Model):
     channel_name = models.CharField(verbose_name='channel_name', max_length=200, null=True, blank=True)
     group_id = models.CharField(verbose_name='组', max_length=64, default="0")
     status = models.BooleanField(verbose_name="是否在线", default=False)
+
+
+class Group(models.Model):
+    group_id = models.CharField(verbose_name='组', max_length=64, default="0")
+    widget_user_ids = ListTextField(
+        base_field=models.IntegerField(),
+        size=10,  # Maximum of 100 ids in list
+    )
