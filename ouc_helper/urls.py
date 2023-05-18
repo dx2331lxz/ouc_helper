@@ -26,4 +26,6 @@ urlpatterns = [
     path('verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('oucchat/', include('apps.oucchat.urls')),
     path('person/', include('apps.information.urls')),
+    path('index/', include('apps.index.urls')),
+    path('object/', include('apps.object.urls')),
 ]

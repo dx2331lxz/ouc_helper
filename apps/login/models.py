@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 # Create your models here.
@@ -7,7 +8,7 @@ from django.contrib.auth.models import User
 
 class Information(models.Model):
     user = models.ForeignKey(verbose_name='关联用户', to=User, to_field='id', on_delete=models.CASCADE)
-    avator_url = models.CharField(verbose_name='头像链接', max_length=60,
+    avatar_url = models.CharField(verbose_name='头像链接', max_length=60,
                                   default='https://image.daoxuan.cc/image/202301301254377.webp')
     name = models.CharField(verbose_name='昵称', max_length=40, default='昵称')
     phone = models.CharField(verbose_name='电话号码', max_length=20, default='')
@@ -23,12 +24,13 @@ type_choices = (
 
 class LostAndFound(models.Model):
     name = models.CharField(verbose_name='物品名称', max_length=40)
-    time = models.DateTimeField(verbose_name='丢失时间')
+    time = models.DateTimeField(verbose_name='丢失时间', blank=True, null=True)
     place = models.CharField(verbose_name='丢失地点', max_length=60)
     user = models.ForeignKey(verbose_name='关联用户', to=User, to_field='id', on_delete=models.CASCADE)
     description = models.TextField(verbose_name='文字介绍', blank=True, null=True)
     type = models.IntegerField(verbose_name='类型', choices=type_choices)
     state = models.BooleanField(verbose_name='状态', default=1)  # 1未找到，0已找到
+    publish_time = models.DateTimeField(verbose_name='发布时间', default=timezone.now)
 
 
 class Picture(models.Model):
