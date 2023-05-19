@@ -192,18 +192,20 @@ def save_to_github(filename, content):
 @csrf_exempt
 def upload_image(request):
     if request.method == 'POST' and request.FILES:
-        user_id = request.user.id
+        # user_id = request.user.id
+        # print('userid', user_id)
         image_file = request.FILES.get('image')
         file_format = image_file.name.split('.')[-1]
         filename = 'ouchelper/' + f'{uuid1().hex}.{file_format}'
+        # print('filemane', filename)
         content = base64.b64encode(image_file.file.read()).decode('utf-8')
         if save_to_github(filename, content):
             # image_url = f"https://raw.githubusercontent.com/{settings.GITHUB_OWNER}/{settings.GITHUB_REPO}/{settings.GITHUB_BRANCH}/{filename}"
             image_url = f"https://image.daoxuan.cc/{filename}"
-            if Information.objects.filter(user_id=user_id):
-                Information.objects.filter(user_id=user_id).update(avatar_url=image_url)
-            else:
-                Information.objects.create(user_id=user_id, avatar_url=image_url)
+            # if Information.objects.filter(user_id=user_id):
+            #     Information.objects.filter(user_id=user_id).update(avatar_url=image_url)
+            # else:
+            #     Information.objects.create(user_id=user_id, avatar_url=image_url)
             data = {
                 'success': True,
                 'url': image_url,
