@@ -48,7 +48,7 @@ class Message(models.Model):
 class Channel(models.Model):
     user_id = models.CharField(verbose_name='用户id', max_length=64)
     channel_name = models.CharField(verbose_name='channel_name', max_length=200, null=True, blank=True)
-    group_id = models.CharField(verbose_name='组', max_length=64, default="0")
+    group_id = models.CharField(verbose_name='组', max_length=640, default="0")
     status = models.BooleanField(verbose_name="是否在线", default=False)
 
 

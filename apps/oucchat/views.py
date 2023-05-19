@@ -6,7 +6,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-
+# 字符串转列表
+import ast
 
 class ChatAPIView(APIView):
     permission_classes = [AllowAny]
@@ -14,7 +15,7 @@ class ChatAPIView(APIView):
     def get(self, request):
         id = request.GET.get('id')
         to_id = request.GET.get('to_id')
-        return render(request, 'chat.html', {'id': id, 'to_id':to_id})
+        return render(request, 'chat.html', {'id': id, 'to_id': to_id})
 
 
 def creat_roomid(u1, u2):
@@ -37,10 +38,17 @@ class AddRoomAPIView(APIView):
         to_channel_name = Channel.objects.filter(user_id=to_id).first().channel_name
         async_to_sync(channel_layer.group_add)(roomid, from_channel_name)
         async_to_sync(channel_layer.group_add)(roomid, to_channel_name)
-        # Channel.objects.filter(user_id__in=[user_id, to_id]).update(group_id=roomid)
+        group_list = Channel.objects.filter(user_id=user_id).first().group_id
+        group_list = ast.literal_eval(group_list)
+        group_list.append(roomid)
+        Channel.objects.filter(user_id=user_id).update(group_id=f'{group_list}')
+        group_list = Channel.objects.filter(user_id=to_id).first().group_id
+        group_list = ast.literal_eval(group_list)
+        group_list.append(roomid)
+        Channel.objects.filter(user_id=to_id).update(group_id=f'{group_list}')
         if Group.objects.filter(group_id=roomid):
             pass
         else:
-            Group.objects.create(group_id=roomid, widget_user_ids=[int(user_id), int(to_id)])
-        result = {"msg": "ok", "code": 200}
+            Group.objects.create(group_id=roomid, widget_user_ids=sorted([int(user_id), int(to_id)]))
+        result = {"msg": "ok", 'data': roomid, "code": 200}
         return Response(result, status=status.HTTP_200_OK)
