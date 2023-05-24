@@ -72,7 +72,7 @@ class LostAndFound(models.Model):
         return self.name
 
 class Picture(models.Model):
-    url = models.CharField(verbose_name='图片链接', max_length=60)
+    url = models.CharField(verbose_name='图片链接', max_length=200)
     thing = models.ForeignKey(to_field='id', to='LostAndFound', on_delete=models.DO_NOTHING, verbose_name='物品')
 
     class Meta:
