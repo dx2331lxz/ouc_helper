@@ -81,7 +81,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def websocket_receive(self, message):
         # print(json.loads(message['text'])['roomid'])
         roomid = str(json.loads(message['text'])['roomid'])
-        print('json.loads(message[''])['']', roomid)
+        print('type', type(json.loads(message['text'])['roomid']))
         user_id = self.scope["url_route"]['kwargs'].get("id")
         print('type', type(roomid))
         print('type', type(user_id))

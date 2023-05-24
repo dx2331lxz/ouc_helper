@@ -200,7 +200,7 @@ CHANNEL_LAYERS = {
 # }
 
 # 设置GitHub账户Token
-GITHUB_TOKEN = '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'  # 用你自己的token替换
+GITHUB_TOKEN = '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'  # 用你自己的token替换
 GITHUB_API_URL = 'https://api.github.com'
 GITHUB_OWNER = 'dx2331lxz'  # 用你自己的用户名替换
 GITHUB_REPO = 'blog-image'  # 用你自己的repo名替换
@@ -214,3 +214,14 @@ GITHUB_REPO_NAME = 'blog-image'
 GITHUB_PERSONAL_ACCESS_TOKEN = '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'
 # 用于图片上传的仓库内容路径，如果已经有个文件夹存储图片，可以设置一个目录路径
 GITHUB_REPO_CONTENT_PATH = 'tomato'
+
+# simpleui
+## 更换logo
+SIMPLEUI_LOGO = 'https://image.daoxuan.cc/image/202304182241674.jpg'
+# SIMPLEUI_LOGO = 'https://image.daoxuan.cc/image/202305062308786.png'
+# SIMPLEUI_LOGO = 'https://image.daoxuan.cc/image/202305070019380.png'
+## 关闭广告
+SIMPLEUI_HOME_INFO = False
+SIMPLEUI_ANALYSIS = False
+# 设置默认主题，指向主题css文件名。紫色风格
+SIMPLEUI_DEFAULT_THEME = 'purple.css'

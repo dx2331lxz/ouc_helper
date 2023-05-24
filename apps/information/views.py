@@ -13,7 +13,7 @@ from ouc_helper import settings
 import requests
 from uuid import uuid1
 from django.http import JsonResponse
-
+from django.utils.decorators import method_decorator
 import json
 
 
@@ -33,7 +33,7 @@ import json
 class GetAPIView(APIView):
     def get(self, request):
         user_id = request.user.id
-        instance = Information.objects.filter(user_id=user_id)
+        instance = Information.objects.filter(user_id=user_id).first()
         serializer = InformationSerializer(instance=instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -189,43 +189,74 @@ def save_to_github(filename, content):
     return False
 
 
-@csrf_exempt
-def upload_image(request):
-    if request.method == 'POST' and request.FILES:
-        # user_id = request.user.id
-        # print('userid', user_id)
-        image_file = request.FILES.get('image')
-        file_format = image_file.name.split('.')[-1]
-        filename = 'ouchelper/' + f'{uuid1().hex}.{file_format}'
-        # print('filemane', filename)
-        content = base64.b64encode(image_file.file.read()).decode('utf-8')
-        if save_to_github(filename, content):
-            # image_url = f"https://raw.githubusercontent.com/{settings.GITHUB_OWNER}/{settings.GITHUB_REPO}/{settings.GITHUB_BRANCH}/{filename}"
-            image_url = f"https://image.daoxuan.cc/{filename}"
-            # if Information.objects.filter(user_id=user_id):
-            #     Information.objects.filter(user_id=user_id).update(avatar_url=image_url)
-            # else:
-            #     Information.objects.create(user_id=user_id, avatar_url=image_url)
-            data = {
-                'success': True,
-                'url': image_url,
-            }
-            return JsonResponse(data)
+# @csrf_exempt
+# def upload_image(request):
+#     if request.method == 'POST' and request.FILES:
+#
+#         image_file = request.FILES.get('image')
+#         file_format = image_file.name.split('.')[-1]
+#         filename = 'ouchelper/' + f'{uuid1().hex}.{file_format}'
+#         # print('filemane', filename)
+#         content = base64.b64encode(image_file.file.read()).decode('utf-8')
+#         if save_to_github(filename, content):
+#             # image_url = f"https://raw.githubusercontent.com/{settings.GITHUB_OWNER}/{settings.GITHUB_REPO}/{settings.GITHUB_BRANCH}/{filename}"
+#             image_url = f"https://picture.daoxuan.cc/{filename}"
+#             # if Information.objects.filter(user_id=user_id):
+#             #     Information.objects.filter(user_id=user_id).update(avatar_url=image_url)
+#             # else:
+#             #     Information.objects.create(user_id=user_id, avatar_url=image_url)
+#             data = {
+#                 'success': True,
+#                 'url': image_url,
+#             }
+#             return JsonResponse(data)
+#         else:
+#             data = {
+#                 'success': False,
+#                 'message': 'Failed to upload image'
+#             }
+#             return JsonResponse(data)
+#     else:
+#         data = {
+#             'success': False,
+#             'message': 'Unsupported file format'
+#         }
+#         return JsonResponse(data)
+@method_decorator(csrf_exempt, name='dispatch')
+class UploadImageAPIView(APIView):
+    def post(self, request):
+        if request.FILES:
+            user_id = request.user.id
+            image_file = request.FILES.get('image')
+            file_format = image_file.name.split('.')[-1]
+            filename = 'ouchelper/' + f'{uuid1().hex}.{file_format}'
+            # print('filemane', filename)
+            content = base64.b64encode(image_file.file.read()).decode('utf-8')
+            if save_to_github(filename, content):
+                # image_url = f"https://raw.githubusercontent.com/{settings.GITHUB_OWNER}/{settings.GITHUB_REPO}/{settings.GITHUB_BRANCH}/{filename}"
+                image_url = f"https://picture.daoxuan.cc/{filename}"
+                if Information.objects.filter(user_id=user_id):
+                    Information.objects.filter(user_id=user_id).update(avatar_url=image_url)
+                else:
+                    Information.objects.create(user_id=user_id, avatar_url=image_url)
+                data = {
+                    'success': True,
+                    'url': image_url,
+                }
+                return Response(data)
+            else:
+                data = {
+                    'success': False,
+                    'message': 'Failed to upload image'
+                }
+                return Response(data)
         else:
             data = {
                 'success': False,
-                'message': 'Failed to upload image'
+                'message': 'Unsupported file format'
             }
-            return JsonResponse(data)
-    else:
-        data = {
-            'success': False,
-            'message': 'Unsupported file format'
-        }
-        return JsonResponse(data)
+            return Response(data)
 
-
-class AvatarGetAPIView(APIView):
     def get(self, request):
         user_id = request.user.id
         information = Information.objects.filter(user_id=user_id)
@@ -236,6 +267,19 @@ class AvatarGetAPIView(APIView):
             obj = Information.objects.create(user_id=user_id)
             avatar_url = obj.avatar_url
             return Response({'msg': avatar_url, 'code': 200}, status=status.HTTP_200_OK)
+
+
+# class AvatarGetAPIView(APIView):
+#     def get(self, request):
+#         user_id = request.user.id
+#         information = Information.objects.filter(user_id=user_id)
+#         if information:
+#             avatar_url = information.first().avatar_url
+#             return Response({'msg': avatar_url, 'code': 200}, status=status.HTTP_200_OK)
+#         else:
+#             obj = Information.objects.create(user_id=user_id)
+#             avatar_url = obj.avatar_url
+#             return Response({'msg': avatar_url, 'code': 200}, status=status.HTTP_200_OK)
 
 
 class page(PageNumberPagination):
