@@ -200,7 +200,7 @@ CHANNEL_LAYERS = {
 # }
 
 # 设置GitHub账户Token
-GITHUB_TOKEN = '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'  # 用你自己的token替换
+GITHUB_TOKEN = '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'  # 用你自己的token替换
 GITHUB_API_URL = 'https://api.github.com'
 GITHUB_OWNER = 'dx2331lxz'  # 用你自己的用户名替换
 GITHUB_REPO = 'blog-image'  # 用你自己的repo名替换
