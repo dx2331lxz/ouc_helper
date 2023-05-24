@@ -112,6 +112,9 @@ class UploadImageView(APIView):
         if request.FILES:
             thing_id = request.POST.get('thing_id')
             # print(thing_id)
+            user_id = request.user.id
+            if models.LostAndFound.objects.filter(id=thing_id).first().user_id != user_id:
+                return JsonResponse({'code': 405, 'message': '该物品不是当前用户发布'})
             image_files = request.FILES.getlist('image')
             # print(image_files)
             image_urls = []
