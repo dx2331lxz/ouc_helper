@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 import base64
 from ouc_helper import settings
 import requests
+from django.utils.decorators import method_decorator
 from uuid import uuid1
 import json
 # Create your views here.
@@ -77,28 +78,58 @@ def save_to_github(filename, content):
     return False
 
 
-@csrf_exempt
-def upload_image(request):
-    if request.method == 'POST' and request.FILES:
-        thing_id =request.POST.get('thing_id')
-        print(thing_id)
-        image_files = request.FILES.getlist('image')
-        print(image_files)
-        image_urls = []
-        for image_file in image_files:
-            file_format = image_file.name.split('.')[-1]
-            filename = 'ouchelper/' + f'{uuid1().hex}.{file_format}'
-            content = base64.b64encode(image_file.file.read()).decode('utf-8')
-            if save_to_github(filename, content):
-                # image_url = f"https://raw.githubusercontent.com/{settings.GITHUB_OWNER}/{settings.GITHUB_REPO}/{settings.GITHUB_BRANCH}/{filename}"
-                image_url = f"https://image.daoxuan.cc/{filename}"
-                models.Picture.objects.create(thing_id=thing_id, url=image_url)
-                image_urls.append(image_url)
-            else:
-                return JsonResponse({'code': 400, 'message': 'Failed to upload image'})
-        data = {
-            'url': image_urls,
-        }
-        return JsonResponse({'code': 200, 'message': 'OK', 'data': data})
-    else:
-        return JsonResponse({'code': 403, 'message': 'Unsupported file format'})
+
+# @csrf_exempt
+# def upload_image(request):
+#     if request.method == 'POST' and request.FILES:
+#         thing_id =request.POST.get('thing_id')
+#         print(thing_id)
+#         image_files = request.FILES.getlist('image')
+#         print(image_files)
+#         image_urls = []
+#         for image_file in image_files:
+#             file_format = image_file.name.split('.')[-1]
+#             filename = 'ouchelper/' + f'{uuid1().hex}.{file_format}'
+#             content = base64.b64encode(image_file.file.read()).decode('utf-8')
+#             if save_to_github(filename, content):
+#                 # image_url = f"https://raw.githubusercontent.com/{settings.GITHUB_OWNER}/{settings.GITHUB_REPO}/{settings.GITHUB_BRANCH}/{filename}"
+#                 image_url = f"https://picture.daoxuan.cc/{filename}"
+#                 models.Picture.objects.create(thing_id=thing_id, url=image_url)
+#                 image_urls.append(image_url)
+#             else:
+#                 return JsonResponse({'code': 400, 'message': 'Failed to upload image'})
+#         data = {
+#             'url': image_urls,
+#         }
+#         return JsonResponse({'code': 200, 'message': 'OK', 'data': data})
+#     else:
+#         return JsonResponse({'code': 403, 'message': 'Unsupported file format'})
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class UploadImageView(APIView):
+    def post(self, request):
+        if request.FILES:
+            thing_id = request.POST.get('thing_id')
+            # print(thing_id)
+            image_files = request.FILES.getlist('image')
+            # print(image_files)
+            image_urls = []
+            for image_file in image_files:
+                file_format = image_file.name.split('.')[-1]
+                filename = 'ouchelper/' + f'{uuid1().hex}.{file_format}'
+                # print('filemane', filename)
+                content = base64.b64encode(image_file.file.read()).decode('utf-8')
+                if save_to_github(filename, content):
+                    # image_url = f"https://raw.githubusercontent.com/{settings.GITHUB_OWNER}/{settings.GITHUB_REPO}/{settings.GITHUB_BRANCH}/{filename}"
+                    image_url = f"https://picture.daoxuan.cc/{filename}"
+                    models.Picture.objects.create(thing_id=thing_id, url=image_url)
+                    image_urls.append(image_url)
+                else:
+                    return JsonResponse({'code': 400, 'message': 'Failed to upload image'})
+                data = {
+                 'url': image_urls,
+                }
+            return JsonResponse({'code': 200, 'message': 'OK', 'data': data})
+        else:
+            return JsonResponse({'code': 403, 'message': 'Unsupported file format'})
