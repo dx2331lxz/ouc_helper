@@ -64,7 +64,7 @@ class EmailVerificationAPIView(APIView):
         <tr>
             <td>
                 <div style=" text-align: center; width: 100%; overflow: hidden; height: 100%; border-top-left-radius: 8px; border-top-right-radius: 8px; ">
-                    <img style="width: 100%" src="https://image.daoxuan.cc/image/202305070019380.png"></div>
+                    <img style="width: 100%" src="https://picture.daoxuan.cc/ouchelper/3c1ee96af66111eda22a005056c00008.png"></div>
             </td>
         </tr>
         </tbody>

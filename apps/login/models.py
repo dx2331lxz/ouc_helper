@@ -113,3 +113,4 @@ class Group(models.Model):
     class Meta:
         verbose_name = "聊天室"
         verbose_name_plural = "聊天室"
+

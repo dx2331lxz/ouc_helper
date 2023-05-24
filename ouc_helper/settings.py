@@ -224,4 +224,6 @@ SIMPLEUI_LOGO = 'https://image.daoxuan.cc/image/202304182241674.jpg'
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_ANALYSIS = False
 # 设置默认主题，指向主题css文件名。紫色风格
+
 SIMPLEUI_DEFAULT_THEME = 'purple.css'
+

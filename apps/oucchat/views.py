@@ -28,24 +28,25 @@ def creat_roomid(u1, u2):
 class AddRoomAPIView(APIView):
     def post(self, request):
         user_id = request.user.id
-        print(user_id)
         data = request.data
         to_id = data['to_id']
         # user_id = data['user_id']
         roomid = creat_roomid(int(to_id), int(user_id))
+        print(roomid)
         channel_layer = get_channel_layer()
         from_channel_name = Channel.objects.filter(user_id=user_id).first().channel_name
         to_channel_name = Channel.objects.filter(user_id=to_id).first().channel_name
         async_to_sync(channel_layer.group_add)(roomid, from_channel_name)
         async_to_sync(channel_layer.group_add)(roomid, to_channel_name)
-        group_list = Channel.objects.filter(user_id=user_id).first().group_id
-        group_list = ast.literal_eval(group_list)
-        group_list.append(roomid)
-        Channel.objects.filter(user_id=user_id).update(group_id=f'{group_list}')
-        group_list = Channel.objects.filter(user_id=to_id).first().group_id
-        group_list = ast.literal_eval(group_list)
-        group_list.append(roomid)
-        Channel.objects.filter(user_id=to_id).update(group_id=f'{group_list}')
+        group_id_list = Channel.objects.filter(user_id=user_id).first().group_id
+        if int(roomid) not in group_id_list:
+            group_id_list.append(int(roomid))
+
+        Channel.objects.filter(user_id=user_id).update(group_id=group_id_list)
+        group_id_list = Channel.objects.filter(user_id=to_id).first().group_id
+        if int(roomid) not in group_id_list:
+            group_id_list.append(int(roomid))
+        Channel.objects.filter(user_id=to_id).update(group_id=group_id_list)
         if Group.objects.filter(group_id=roomid):
             pass
         else:

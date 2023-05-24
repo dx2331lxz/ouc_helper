@@ -54,155 +54,159 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8"/>
     <title>WebSocket Chat</title>
     <style>
-      body {
-        font-family: Arial, Helvetica, sans-serif;
-      }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-      h1 {
-        text-align: center;
-      }
+        h1 {
+            text-align: center;
+        }
 
-      #messages {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #f4f4f4;
-        border-radius: 5px;
-      }
+        #messages {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
 
-      #messages div {
-        margin-bottom: 10px;
-      }
+        #messages div {
+            margin-bottom: 10px;
+        }
 
-      .message-avatar {
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-        margin-right: 10px;
-        border-radius: 50%;
-        overflow: hidden;
-      }
+        .message-avatar {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
 
-      .user-avatar {
-        background-image: url(https://image.daoxuan.cc/image/202301051351497.jpg);
-      }
+        .user-avatar {
+            background-image: url(https://image.daoxuan.cc/image/202301051351497.jpg);
+        }
 
-      .ai-avatar {
-        background-image: url(https://image.daoxuan.cc/image/202301051403913.png);
-      }
+        .ai-avatar {
+            background-image: url(https://image.daoxuan.cc/image/202301051403913.png);
+        }
 
-      .user-message {
-        position: relative;
-        display: inline-block;
-        margin-right: 50px;
-        padding: 10px;
-        background-color: #fff;
-        border-radius: 10px;
-      }
+        .user-message {
+            position: relative;
+            display: inline-block;
+            margin-right: 50px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+        }
 
-      .user-message::after {
-        content: '';
-        display: block;
-        position: absolute;
-        top: 50%;
-        right: -10px;
-        width: 0;
-        height: 0;
-        border-top: 10px solid transparent;
-        border-bottom: 10px solid transparent;
-        border-right: 10px solid #fff;
-        transform: translateY(-50%);
-      }
+        .user-message::after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 50%;
+            right: -10px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid #fff;
+            transform: translateY(-50%);
+        }
 
-      .ai-message {
-        position: relative;
-        display: inline-block;
-        padding: 10px;
-        background-color: #f0f0f0;
-        border-radius: 10px;
-      }
+        .ai-message {
+            position: relative;
+            display: inline-block;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+        }
 
-      .ai-message::after {
-        content: '';
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: -10px;
-        width: 0;
-        height: 0;
-        border-top: 10px solid transparent;
-        border-bottom: 10px solid transparent;
-        border-left: 10px solid #f0f0f0;
-        transform: translateY(-50%);
-      }
+        .ai-message::after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: -10px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid #f0f0f0;
+            transform: translateY(-50%);
+        }
     </style>
-  </head>
-  <body>
-    <h1>WebSocket Chat</h1>
-    <div id="messages"></div>
-    <form>
-      <label for="name">Name:</label>
-      <input type="text" id="name" />
-      <label for="message">Message:</label>
-      <input type="text" id="message" />
-      <button type="submit">Send</button>
-    </form>
-    <script>
-      const messages = document.getElementById("messages");
-      const socket = new WebSocket("ws://127.0.0.1:8000/room/{{ id }}/");
-      const userAvatar = "https://image.daoxuan.cc/image/202301051351497.jpg";
-      const aiAvatar = "https://image.daoxuan.cc/image/202301051403913.png";
+</head>
+<body>
+<h1>WebSocket Chat</h1>
+<div id="messages"></div>
+<form>
+    <label for="name">Name:</label>
+    <input type="text" id="name"/>
+    <label for="message">Message:</label>
+    <input type="text" id="message"/>
+    <button type="submit">Send</button>
+    <input type="text" id="roomid"/>
+    <button type="submit">Send</button>
+</form>
+<script>
+    const messages = document.getElementById("messages");
+    const socket = new WebSocket("ws://127.0.0.1:8000/room/{{ id }}/");
+    const userAvatar = "https://image.daoxuan.cc/image/202301051351497.jpg";
+    const aiAvatar = "https://image.daoxuan.cc/image/202301051403913.png";
 
-      socket.addEventListener("open", (event) => {
+    socket.addEventListener("open", (event) => {
         console.log("Connected to WebSocket server");
-      });
+    });
 
-      socket.addEventListener("message", (event) => {
+    socket.addEventListener("message", (event) => {
         const data = JSON.parse(event.data);
         const message = document.createElement("div");
         const avatar = document.createElement("div");
         const content = document.createElement("span");
         avatar.classList.add("message-avatar");
         if (data.name === "User") {
-          avatar.classList.add("user-avatar");
-          message.classList.add("user-message");
+            avatar.classList.add("user-avatar");
+            message.classList.add("user-message");
         } else {
-          avatar.classList.add("ai-avatar");
-          message.classList.add("ai-message");
+            avatar.classList.add("ai-avatar");
+            message.classList.add("ai-message");
         }
         content.innerText = `${data.message}`;
         avatar.appendChild(document.createElement("img"));
         message.appendChild(avatar);
         message.appendChild(content);
         messages.appendChild(message);
-      });
+    });
 
-      const form = document.querySelector("form");
-      form.addEventListener("submit", (event) => {
+    const form = document.querySelector("form");
+    form.addEventListener("submit", (event) => {
         event.preventDefault();
         const name = document.getElementById("name").value;
         const message = document.getElementById("message").value;
-        socket.send(JSON.stringify({ 'roomid':12, name: name, message: message }));
-        document.getElementById("message").value = "";
-      });
+        const roomid = document.getElementById("roomid").value;
 
-      function setAvatar(url) {
+        socket.send(JSON.stringify({roomid: roomid, name: name, message: message}));
+        document.getElementById("message").value = "";
+    });
+
+    function setAvatar(url) {
         const images = document.querySelectorAll(".message-avatar img");
         images[images.length - 1].src = url;
-      }
+    }
 
-      socket.addEventListener("open", (event) => {
+    socket.addEventListener("open", (event) => {
         setAvatar(aiAvatar);
-      });
+    });
 
-      form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", (event) => {
         event.preventDefault();
         setAvatar(userAvatar);
-      });
-    </script>
-  </body>
+    });
+</script>
+</body>
 </html>

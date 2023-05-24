@@ -80,12 +80,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def websocket_receive(self, message):
         # print(json.loads(message['text'])['roomid'])
-        roomid = json.loads(message['text'])['roomid']
+        roomid = str(json.loads(message['text'])['roomid'])
+        print('type', type(json.loads(message['text'])['roomid']))
         user_id = self.scope["url_route"]['kwargs'].get("id")
+        print('type', type(roomid))
+        print('type', type(user_id))
         # group_id = await self.get_name(user_id, to_id)
         group_id = roomid
         await self.get_status(user_id, group_id, message)
-        # await self.channel_layer.group_send(group_id, {"type": "send_message", "message": message})
+        await self.channel_layer.group_send(group_id, {"type": "send_message", "message": message})
 
     # 得到房间号
     # @database_sync_to_async
@@ -100,9 +103,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # if Channel.objects.filter(user_id=to_id).first().status == 0:
         #     Message.objects.create(room_id=group_id, from_user=user_id, to_user=to_id, content=message['text'])
         for uid in Group.objects.filter(group_id=group_id).first().widget_user_ids:
-            if uid == user_id:
+            print(uid)
+            if str(uid) == user_id:
+                print('zhe')
                 pass
-            elif Channel.objects.filter(user_id=uid).first().status == 0:
+            elif Channel.objects.filter(user_id=str(uid)).first().status == 0:
+                print('cunchu')
                 Message.objects.create(room_id=group_id, from_user=user_id, to_user=uid, content=message['text'])
 
     async def send_message(self, event):
@@ -112,12 +118,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def websocket_disconnect(self, message):
         # group = self.scope["url_route"]['kwargs'].get("group")
-        # self.group_id = await self.change_channel(self.channel_name)
+        await self.change_channel(self.channel_name)
         # await self.channel_layer.group_discard(self.group_id, self.channel_name)
         # group = await self.channel_layer.group_status(self.group_id)
         group_list = await self.delete_group()
-        for group_id in group_list:
-            await self.channel_layer.group_discard(group_id, self.channel_name)
+        print(group_list)
+        # for group_id in group_list:
+        #     await self.channel_layer.group_discard(group_id, self.channel_name)
         print('离开了')
         raise StopConsumer()
 
@@ -130,5 +137,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def delete_group(self):
         group_list = Channel.objects.filter(channel_name=self.channel_name).first().group_id
-        group_list = ast.literal_eval(group_list)
         return group_list
