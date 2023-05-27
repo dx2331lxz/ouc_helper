@@ -16,9 +16,10 @@ import sys
 import os
 import configparser
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+SITE_DOMAIN = '127.0.0.1:8000'
 conf = configparser.RawConfigParser()
 
 conf.read(os.path.join(BASE_DIR, "config.ini"), encoding="utf-8")
@@ -155,6 +156,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -200,7 +202,7 @@ CHANNEL_LAYERS = {
 # }
 
 # 设置GitHub账户Token
-GITHUB_TOKEN = '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'  # 用你自己的token替换
+GITHUB_TOKEN = conf.get("github-token", "GITHUB_TOKEN")  # 用你自己的token替换
 GITHUB_API_URL = 'https://api.github.com'
 GITHUB_OWNER = 'dx2331lxz'  # 用你自己的用户名替换
 GITHUB_REPO = 'blog-image'  # 用你自己的repo名替换
@@ -226,4 +228,3 @@ SIMPLEUI_ANALYSIS = False
 # 设置默认主题，指向主题css文件名。紫色风格
 
 SIMPLEUI_DEFAULT_THEME = 'purple.css'
-
