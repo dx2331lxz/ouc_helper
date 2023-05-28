@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.login import models
-from .serializer import LostAndFoundModelSerializer, PictureSerializer
+from .serializer import LostAndFoundModelSerializer
 
 from django.views.decorators.csrf import csrf_exempt
 import base64
@@ -13,6 +13,7 @@ import requests
 from django.utils.decorators import method_decorator
 from uuid import uuid1
 import json
+import os
 # Create your views here.
 
 
@@ -25,11 +26,11 @@ class InformationView(APIView):
         objs_s = LostAndFoundModelSerializer(instance=obj, many=True)
         user = models.Information.objects.filter(user_id=objs_s.data[0]['user']).first()
         objs_s.data[0]['user_name'] = user.name
-        objs_s.data[0]['avatar'] = user.avatar_url
+        objs_s.data[0]['avatar'] = f'{settings.SITE_DOMAIN}{user.avatar_url.url}'
         pictures = models.Picture.objects.filter(thing_id=id)
         picture_data = []
         for picture in pictures:
-            picture_data.append(picture.url)
+            picture_data.append(f'{settings.SITE_DOMAIN}{picture.url.url}')
         objs_s.data[0]['pictures'] = picture_data
         contact = {
             'phone': user.phone,
@@ -57,6 +58,10 @@ class InformationDeleteView(APIView):
         user_id = request.user.id
         if not models.LostAndFound.objects.filter(id=id, user_id=user_id).exists():
             return JsonResponse({'code': 404, 'message': '该记录不存在或不是当前登录用户发布'})
+        pictures = models.Picture.objects.filter(thing_id=id)
+        for picture in pictures:
+            os.remove(picture.url.path)
+            picture.delete()
         models.LostAndFound.objects.filter(id=id, user_id=user_id).first().delete()
         return JsonResponse({'code': 200, 'message': 'OK'})
 
@@ -110,32 +115,26 @@ class InformationDeleteView(APIView):
 #         else:
 #             return JsonResponse({'code': 403, 'message': 'Unsupported file format'})
 
+
 class UploadImageAPIView(APIView):
     def post(self, request):
-        user_id = request.user.id
-        data = request.data
-        thing_id = data.get('thing_id', '')
-        image = data.getlist('image')
-        print(image)
-        if thing_id == '':
-            return Response('请传thing_id')
-        # image = data.get('image','')
-        if image == '':
-            return Response('请传图片')
-        elif image.size >  1 * 1024 * 1024:
-            return Response('上传文件过大')
+        if request.FILES:
+            thing_id = request.POST.get('thing_id')
+            # print(thing_id)
+            user_id = request.user.id
+            if models.LostAndFound.objects.filter(id=thing_id).first().user_id != user_id:
+                return JsonResponse({'code': 405, 'message': '该物品不是当前用户发布'})
+            image_files = request.FILES.getlist('image')
+            # print(image_files)
+            image_urls = []
+            for image_file in image_files:
+                if image_file.size > 1 * 1024 * 1024:
+                    return JsonResponse({'code': 402, 'message': '上传文件过大'})
+                else:
+                    picture = models.Picture.objects.create(thing_id=thing_id)
+                    picture.url = image_file
+                    picture.save()
+                    image_urls.append(f'{settings.SITE_DOMAIN}{picture.url.url}')
+            return JsonResponse({'code': 200, 'url': image_urls})
         else:
-            return Response('ah')
-            # serializer = ImageSerializer(data=request.data.getlist('images'), many=True)
-            # if serializer.is_valid():
-            #     serializer.save()
-            #     return Response(serializer.data, status=201)
-            # else:
-            #     return Response(serializer.errors, status=400)
-
-    def get(self, request):
-        user_id = request.user.id
-        if not Information.objects.filter(user_id=user_id):
-            Information.objects.create(user_id=user_id)
-        else:
-            return Response({'url':f'{settings.SITE_DOMAIN}{Information.objects.filter(user_id=user_id).first().avatar_url.url}'})
+            return JsonResponse({'code': 401,'message':'请传图片'})

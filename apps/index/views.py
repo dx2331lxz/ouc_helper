@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 
 from apps.login import models
 from .serializer import LostAndFoundModelSerializer
+from ouc_helper import settings
 
 import json
 # Create your views here.
@@ -34,10 +35,10 @@ class IndexView(APIView):
             user = models.Information.objects.filter(user_id=datas['user_id']).first()
             pictures = models.Picture.objects.filter(thing_id=datas['id']).order_by('id')[:3]
             datas['user_name'] = user.name
-            datas['user_avatar'] = user.avatar_url
+            datas['user_avatar'] = f'{settings.SITE_DOMAIN}{user.avatar_url.url}'
             picture_data = []
             for picture in pictures:
-                picture_data.append(picture.url)
+                picture_data.append(f'{settings.SITE_DOMAIN}{picture.url.url}')
             datas['pictures'] = picture_data
         return JsonResponse({'code': 200, 'message': 'OK', 'data': objs_s.data})
 
