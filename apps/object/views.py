@@ -61,7 +61,6 @@ class InformationDeleteView(APIView):
         pictures = models.Picture.objects.filter(thing_id=id)
         for picture in pictures:
             os.remove(picture.url.path)
-            print(picture.url.path)
             picture.delete()
         models.LostAndFound.objects.filter(id=id, user_id=user_id).first().delete()
         return JsonResponse({'code': 200, 'message': 'OK'})
