@@ -295,6 +295,6 @@ class PersonObjectView(APIView):
             pictures = Picture.objects.filter(thing_id=datas['id']).order_by('id')[:3]
             picture_data = []
             for picture in pictures:
-                picture_data.append(picture.url)
+                picture_data.append(f'{settings.SITE_DOMAIN}{picture.url.url}')
             datas['pictures'] = picture_data
         return JsonResponse({'code': 200, 'message': 'OK', 'data': objs_s.data})
