@@ -9,8 +9,9 @@ from django.utils.safestring import mark_safe
 
 class Information(models.Model):
     user = models.ForeignKey(verbose_name='关联用户', to=User, to_field='id', on_delete=models.CASCADE)
-    avatar_url = models.CharField(verbose_name='头像链接', max_length=200,
-                                  default='https://picture.daoxuan.cc/image/202301301254377.webp')
+    # avatar_url = models.CharField(verbose_name='头像链接', max_length=200,
+    #                               default='https://picture.daoxuan.cc/image/202301301254377.webp')
+    avatar_url = models.ImageField(upload_to='avatar', null=True, blank=True)
     name = models.CharField(verbose_name='昵称', max_length=40, default='昵称')
     phone = models.CharField(verbose_name='电话号码', max_length=20, default='')
     qq = models.CharField(verbose_name='qq号', max_length=30, default='')
@@ -73,7 +74,7 @@ class LostAndFound(models.Model):
         return self.name
 
 class Picture(models.Model):
-    url = models.CharField(verbose_name='图片链接', max_length=200)
+    url = models.ImageField(upload_to='object', null=True, blank=True)
     thing = models.ForeignKey(to_field='id', to='LostAndFound', on_delete=models.DO_NOTHING, verbose_name='物品')
 
     class Meta:
