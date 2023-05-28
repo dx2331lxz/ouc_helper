@@ -13,6 +13,7 @@ import requests
 from django.utils.decorators import method_decorator
 from uuid import uuid1
 import json
+import os
 # Create your views here.
 
 
@@ -57,6 +58,11 @@ class InformationDeleteView(APIView):
         user_id = request.user.id
         if not models.LostAndFound.objects.filter(id=id, user_id=user_id).exists():
             return JsonResponse({'code': 404, 'message': '该记录不存在或不是当前登录用户发布'})
+        pictures = models.Picture.objects.filter(thing_id=id)
+        for picture in pictures:
+            os.remove(picture.url.path)
+            print(picture.url.path)
+            picture.delete()
         models.LostAndFound.objects.filter(id=id, user_id=user_id).first().delete()
         return JsonResponse({'code': 200, 'message': 'OK'})
 
