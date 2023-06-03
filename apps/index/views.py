@@ -26,7 +26,7 @@ class IndexView(APIView):
     pagination_class = page
 
     def get(self, request):
-        data = json.loads(request.body.decode())
+        data = request.query_params.dict()
         type = data['type']
         objs = models.LostAndFound.objects.filter(type=type)
         paginated_objs = self.pagination_class().paginate_queryset(objs, request)

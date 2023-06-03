@@ -20,7 +20,7 @@ import os
 class InformationView(APIView):
 
     def get(self, request):
-        data = json.loads(request.body.decode())
+        data = request.query_params.dict()
         id = data['id']
         obj = models.LostAndFound.objects.filter(id=id)
         objs_s = LostAndFoundModelSerializer(instance=obj, many=True)
@@ -137,4 +137,4 @@ class UploadImageAPIView(APIView):
                     image_urls.append(f'{settings.SITE_DOMAIN}{picture.url.url}')
             return JsonResponse({'code': 200, 'url': image_urls})
         else:
-            return JsonResponse({'code': 401,'message':'请传图片'})
+            return JsonResponse({'code': 401, 'message': '请传图片'})
